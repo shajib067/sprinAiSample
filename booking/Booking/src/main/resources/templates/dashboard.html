@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Tutor Dashboard</h2>
+
+<button onclick="logout()">Logout</button>
+
+<p id="status"></p>
+
+<script>
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+        window.location.href = "/login";
+    }
+
+    // Example authenticated call
+    fetch("/tutor/me", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("status").innerText =
+            "Logged in as " + data.email;
+    })
+    .catch(() => {
+        logout();
+    });
+
+    function logout() {
+        localStorage.removeItem("jwt");
+        window.location.href = "/login";
+    }
+</script>
+
+</body>
+</html>

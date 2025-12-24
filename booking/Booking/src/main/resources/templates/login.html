@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>Login</h2>
+
+<form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required /><br/>
+    <input type="password" id="password" placeholder="Password" required /><br/>
+    <table>
+        <tr>
+            <td><button type="submit">Login</button></td>
+            <td><button type="button" onclick="window.location.href='/signup'">Signup</button></td>
+        </tr>
+    </table>
+</form>
+
+<p id="error" style="color:red;"></p>
+
+
+<script>
+    if (localStorage.getItem("jwt")) {
+        window.location.href = "/dashboard";
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const res = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email.value,
+                password: password.value
+            })
+        });
+
+        if (!res.ok) {
+            document.getElementById("error").innerText = "Invalid credentials";
+            return;
+        }
+
+        const data = await res.json();
+        localStorage.setItem("jwt", data.token);
+        window.location.href = "/dashboard";
+    });
+</script>
+</body>
+</html>
